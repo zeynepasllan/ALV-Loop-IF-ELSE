@@ -1,0 +1,176 @@
+<!DOCTY "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xht />
+<title>ZZAS_P04</title>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZZAS_P04</h2>
+<h3> Description: </h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Report&nbsp;ZZAS_P04<br />
+*&---------------------------------------------------------------------*<br />
+*&<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+report zzas_p04.<br />
+<br />
+tables: zzas_t02.<br />
+<br />
+types: begin of gty_ogr,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ogr_no&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type&nbsp;zzas_de01,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ogr_ad&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type&nbsp;vorna,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ogr_soyad&nbsp;&nbsp;&nbsp;type&nbsp;nachn,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ders_adi&nbsp;&nbsp;&nbsp;&nbsp;type&nbsp;vorna,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;birinci_snv&nbsp;type&nbsp;zzas_snv,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ikinci_snv&nbsp;&nbsp;type&nbsp;zzas_snv2,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ort&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type&nbsp;char10,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;durum&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type&nbsp;char10,<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;S_PNO&nbsp;TYPE&nbsp;CHAR10,<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end&nbsp;of&nbsp;gty_ogr.<br />
+<br />
+data: gt_ogr type table of gty_ogr,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_ogr&nbsp;type&nbsp;gty_ogr.<br />
+<br />
+data: gt_fieldcatalog type slis_t_fieldcat_alv,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_fieldcatalog&nbsp;type&nbsp;slis_fieldcat_alv.<br />
+<br />
+data: gs_layout type slis_layout_alv.<br />
+<br />
+selection-screen begin of block mainsel with frame title text-001.<br />
+&nbsp;&nbsp;select-options:&nbsp;s_pno&nbsp;for&nbsp;zzas_t02-ogr_no.<br />
+selection-screen end of block mainsel.<br />
+<br />
+start-of-selection.<br />
+<br />
+&nbsp;&nbsp;perform&nbsp;:&nbsp;get_data&nbsp;,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set_data&nbsp;,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show_alv&nbsp;.<br />
+<br />
+end-of-selection .<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;set_data<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+form set_data .<br />
+   </div>
+   <div class="codeComment">
+*-<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;loop&nbsp;at&nbsp;gt_ogr&nbsp;into&nbsp;gs_ogr.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;gs_ogr-ort&nbsp;=&nbsp;(&nbsp;gs_ogr-birinci_snv&nbsp;+&nbsp;gs_ogr-ikinci_snv&nbsp;)&nbsp;/&nbsp;2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;gs_ogr-ort&nbsp;&gt;=&nbsp;45.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_ogr-durum&nbsp;=&nbsp;'Geçti'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;else.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_ogr-durum&nbsp;=&nbsp;'Kaldý'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;endif.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;modify&nbsp;gt_ogr&nbsp;from&nbsp;gs_ogr.<br />
+&nbsp;&nbsp;endloop.<br />
+<br />
+endform.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;get_data<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+form get_data .<br />
+   </div>
+   <div class="codeComment">
+*-<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;select&nbsp;*&nbsp;from&nbsp;zzas_t02<br />
+&nbsp;&nbsp;&nbsp;&nbsp;inner&nbsp;join&nbsp;zzas_t03&nbsp;on&nbsp;zzas_t03~ogr_no&nbsp;eq&nbsp;zzas_t02~ogr_no<br />
+&nbsp;&nbsp;&nbsp;&nbsp;into&nbsp;corresponding&nbsp;fields&nbsp;of&nbsp;table&nbsp;gt_ogr<br />
+&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;zzas_t02~ogr_no&nbsp;in&nbsp;s_pno.<br />
+<br />
+endform.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;show_alv<br />
+*&---------------------------------------------------------------------*,<br />
+   </div>
+   <div class="code">
+form show_alv .<br />
+   </div>
+   <div class="codeComment">
+*-<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;perform&nbsp;&nbsp;append_fcat&nbsp;:&nbsp;using&nbsp;'OGR_NO'&nbsp;'Öðrenci&nbsp;No'&nbsp;,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;'OGR_AD'&nbsp;'Adý'&nbsp;,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;'OGR_SOYAD'&nbsp;'Soyadý'&nbsp;,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;'DERS_ADI'&nbsp;'Ders&nbsp;Adý'&nbsp;,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;'BIRINCI_SNV'&nbsp;'Birinci&nbsp;Sýnav'&nbsp;,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;'IKINCI_SNV'&nbsp;'Ýkinci&nbsp;Sýnav'&nbsp;,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;'ORT'&nbsp;'Ortalama'&nbsp;,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;'DURUM'&nbsp;'Durum'&nbsp;.<br />
+<br />
+&nbsp;&nbsp;gs_layout-window_titlebar&nbsp;=&nbsp;'Öðrenci&nbsp;Sýnav&nbsp;Bilgileri'.<br />
+&nbsp;&nbsp;gs_layout-zebra&nbsp;=&nbsp;abap_true.<br />
+   </div>
+   <div class="codeComment">
+*gs_layout-colwidth_optimize&nbsp;=&nbsp;abap_true.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;call&nbsp;function&nbsp;'REUSE_ALV_GRID_DISPLAY'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;exporting<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is_layout&nbsp;&nbsp;&nbsp;=&nbsp;gs_layout<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;it_fieldcat&nbsp;=&nbsp;gt_fieldcatalog<br />
+&nbsp;&nbsp;&nbsp;&nbsp;tables<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_outtab&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;gt_ogr.<br />
+<br />
+endform.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;append_fcat<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+form append_fcat  using p_fname p_header .<br />
+   </div>
+   <div class="codeComment">
+*-<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;clear:&nbsp;gs_fieldcatalog.<br />
+&nbsp;&nbsp;gs_fieldcatalog-fieldname&nbsp;=&nbsp;p_fname.<br />
+&nbsp;&nbsp;gs_fieldcatalog-seltext_s&nbsp;=&nbsp;p_header.<br />
+&nbsp;&nbsp;gs_fieldcatalog-seltext_m&nbsp;=&nbsp;p_header.<br />
+&nbsp;&nbsp;gs_fieldcatalog-seltext_l&nbsp;=&nbsp;p_header.<br />
+&nbsp;&nbsp;append&nbsp;gs_fieldcatalog&nbsp;to&nbsp;gt_fieldcatalog.<br />
+<br />
+endform.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
